@@ -4,7 +4,6 @@ state = None
 
 def reset():
     global state
-
     state = [
         random.randint(0, 10),
         random.randint(0, 10),
@@ -12,7 +11,6 @@ def reset():
         random.randint(0, 10),
         0
     ]
-
     return {
         "observation": state,
         "reward": 0,
@@ -37,4 +35,10 @@ def step(action):
         "terminated": False,
         "truncated": False,
         "info": {}
+    }
+
+def state_fn():
+    global state
+    return {
+        "observation": state
     }
