@@ -26,14 +26,14 @@ app.post("/reset", (req, res) => {
     currentState = env.reset();
 
     const observation = [
-        currentState.north,
-        currentState.south,
-        currentState.east,
-        currentState.west,
+        Number(currentState.north),
+        Number(currentState.south),
+        Number(currentState.east),
+        Number(currentState.west),
         currentState.currentLight === "NS" ? 0 : 1
     ];
 
-    res.json({
+    return res.status(200).json({
         observation,
         reward: 0,
         terminated: false,
@@ -44,22 +44,22 @@ app.post("/reset", (req, res) => {
 
 // ✅ STEP endpoint (OpenEnv format)
 app.post("/step", (req, res) => {
-    const action = req.body?.action ?? 0;
+    const action = Number(req.body?.action ?? 0);
 
     const result = env.step(action);
     currentState = result.state;
 
     const observation = [
-        currentState.north,
-        currentState.south,
-        currentState.east,
-        currentState.west,
+        Number(currentState.north),
+        Number(currentState.south),
+        Number(currentState.east),
+        Number(currentState.west),
         currentState.currentLight === "NS" ? 0 : 1
     ];
 
-    res.json({
+    return res.status(200).json({
         observation,
-        reward: result.reward,
+        reward: Number(result.reward ?? 0),
         terminated: false,
         truncated: false,
         info: {}
