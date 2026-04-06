@@ -15,8 +15,8 @@ class TrafficEnv:
         return self.state
 
     def step(self, action):
-        # simple logic
         reward = -sum(self.state[:4])
+
         self.state = [
             max(0, s - random.randint(0, 2)) for s in self.state[:4]
         ] + [action]
