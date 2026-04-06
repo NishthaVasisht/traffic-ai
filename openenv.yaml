@@ -1,0 +1,12 @@
+name: traffic-ai-env
+version: 1.0
+
+entrypoint: server.py
+
+observation_space:
+  type: array
+  shape: [5]
+
+action_space:
+  type: discrete
+  n: 2
