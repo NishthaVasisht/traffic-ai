@@ -1,34 +1,20 @@
 import random
 
-class TrafficEnv:
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self.state = [
-            random.randint(0, 10),
-            random.randint(0, 10),
-            random.randint(0, 10),
-            random.randint(0, 10),
-            0
-        ]
-        return self.state
-
-    def step(self, action):
-        reward = -sum(self.state[:4])
-
-        self.state = [
-            max(0, s - random.randint(0, 2)) for s in self.state[:4]
-        ] + [action]
-
-        return self.state, reward, False, {}
-
-env = TrafficEnv()
+state = None
 
 def reset():
-    obs = env.reset()
+    global state
+
+    state = [
+        random.randint(0, 10),
+        random.randint(0, 10),
+        random.randint(0, 10),
+        random.randint(0, 10),
+        0
+    ]
+
     return {
-        "observation": obs,
+        "observation": state,
         "reward": 0,
         "terminated": False,
         "truncated": False,
@@ -36,9 +22,21 @@ def reset():
     }
 
 def step(action):
-    obs, reward, done, info = env.step(action)
+    global state
+
+    # update light
+    state[4] = action
+
+    # reduce traffic
+    state[0] = max(0, state[0] - random.randint(0, 2))
+    state[1] = max(0, state[1] - random.randint(0, 2))
+    state[2] = max(0, state[2] - random.randint(0, 2))
+    state[3] = max(0, state[3] - random.randint(0, 2))
+
+    reward = -(state[0] + state[1] + state[2] + state[3])
+
     return {
-        "observation": obs,
+        "observation": state,
         "reward": reward,
         "terminated": False,
         "truncated": False,
