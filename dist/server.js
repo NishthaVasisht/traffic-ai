@@ -17,51 +17,41 @@ app.get("/", (req, res) => {
 });
 // ✅ RESET endpoint (OpenEnv format)
 app.post("/reset", (req, res) => {
-    try {
-        currentState = env.reset();
-        const observation = [
-            currentState.north,
-            currentState.south,
-            currentState.east,
-            currentState.west,
-            currentState.currentLight === "NS" ? 0 : 1
-        ];
-        res.status(200).json({
-            observation,
-            reward: 0,
-            done: false,
-            info: {}
-        });
-    }
-    catch (error) {
-        console.error("RESET ERROR:", error);
-        res.status(500).json({ error: "Reset failed" });
-    }
+    currentState = env.reset();
+    const observation = [
+        currentState.north,
+        currentState.south,
+        currentState.east,
+        currentState.west,
+        currentState.currentLight === "NS" ? 0 : 1
+    ];
+    res.json({
+        observation,
+        reward: 0,
+        terminated: false,
+        truncated: false,
+        info: {}
+    });
 });
 // ✅ STEP endpoint (OpenEnv format)
 app.post("/step", (req, res) => {
-    try {
-        const action = req.body?.action ?? 0;
-        const result = env.step(action);
-        currentState = result.state;
-        const observation = [
-            currentState.north,
-            currentState.south,
-            currentState.east,
-            currentState.west,
-            currentState.currentLight === "NS" ? 0 : 1
-        ];
-        res.status(200).json({
-            observation,
-            reward: result.reward ?? 0,
-            done: result.done ?? false,
-            info: {}
-        });
-    }
-    catch (error) {
-        console.error("STEP ERROR:", error);
-        res.status(500).json({ error: "Step failed" });
-    }
+    const action = req.body?.action ?? 0;
+    const result = env.step(action);
+    currentState = result.state;
+    const observation = [
+        currentState.north,
+        currentState.south,
+        currentState.east,
+        currentState.west,
+        currentState.currentLight === "NS" ? 0 : 1
+    ];
+    res.json({
+        observation,
+        reward: result.reward,
+        terminated: false,
+        truncated: false,
+        info: {}
+    });
 });
 // ✅ Fallback route (prevents "Not Found" issues)
 app.use((req, res) => {
