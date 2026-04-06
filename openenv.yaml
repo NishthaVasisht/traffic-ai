@@ -1,7 +1,13 @@
 name: traffic-ai-env
 version: 1.0
 
-entrypoint: server.py
+entrypoint: inference.py
+
+protocol: http
+
+endpoints:
+  reset: /reset
+  step: /step
 
 observation_space:
   type: array
