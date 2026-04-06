@@ -17,26 +17,34 @@ app.get("/", (req, res) => {
 
 // ✅ RESET endpoint
 app.post("/reset", (req, res) => {
-  currentState = env.reset();
-
-  res.json({
-    state: currentState
+    currentState = env.reset();
+  
+    res.json({
+      observation: currentState,
+      reward: 0,
+      done: false,
+      info: {}
+    });
   });
-});
 
 // ✅ STEP endpoint
 app.post("/step", (req, res) => {
-  const { action } = req.body;
-
-  if (action === undefined) {
-    return res.status(400).json({ error: "Action is required" });
-  }
-
-  const result = env.step(action);
-  currentState = result.state;
-
-  res.json(result);
-});
+    const { action } = req.body;
+  
+    if (action === undefined) {
+      return res.status(400).json({ error: "Action is required" });
+    }
+  
+    const result = env.step(action);
+    currentState = result.state;
+  
+    res.json({
+      observation: result.state,
+      reward: result.reward,
+      done: result.done,
+      info: {}
+    });
+  });
 
 // ✅ START SERVER
 app.listen(PORT, () => {
