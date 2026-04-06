@@ -24,16 +24,12 @@ def reset():
 def step(action):
     global state
 
-    # update light
     state[4] = action
 
-    # reduce traffic
-    state[0] = max(0, state[0] - random.randint(0, 2))
-    state[1] = max(0, state[1] - random.randint(0, 2))
-    state[2] = max(0, state[2] - random.randint(0, 2))
-    state[3] = max(0, state[3] - random.randint(0, 2))
+    for i in range(4):
+        state[i] = max(0, state[i] - random.randint(0, 2))
 
-    reward = -(state[0] + state[1] + state[2] + state[3])
+    reward = -sum(state[:4])
 
     return {
         "observation": state,
