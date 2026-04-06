@@ -2,20 +2,20 @@ import express from "express";
 import cors from "cors";
 import { TrafficEnv } from "./env/trafficEnv.js";
 const app = express();
-// ✅ Middleware
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// ✅ Port (important for Render)
-const PORT = process.env.PORT || 3000;
-// ✅ Environment
+// IMPORTANT for Docker + OpenEnv
+const PORT = Number(process.env.PORT) || 3000;
+// Environment
 const env = new TrafficEnv();
 let currentState = env.reset();
-// ✅ Health check (important for validators)
+// Health check
 app.get("/", (req, res) => {
     res.status(200).send("🚦 Traffic RL Server Running");
 });
-// ✅ RESET endpoint (OpenEnv format)
+// RESET
 app.post("/reset", (req, res) => {
     currentState = env.reset();
     const observation = [
@@ -25,7 +25,7 @@ app.post("/reset", (req, res) => {
         Number(currentState.west),
         currentState.currentLight === "NS" ? 0 : 1
     ];
-    return res.status(200).json({
+    return res.json({
         observation,
         reward: 0,
         terminated: false,
@@ -33,7 +33,7 @@ app.post("/reset", (req, res) => {
         info: {}
     });
 });
-// ✅ STEP endpoint (OpenEnv format)
+// STEP
 app.post("/step", (req, res) => {
     const action = Number(req.body?.action ?? 0);
     const result = env.step(action);
@@ -45,7 +45,7 @@ app.post("/step", (req, res) => {
         Number(currentState.west),
         currentState.currentLight === "NS" ? 0 : 1
     ];
-    return res.status(200).json({
+    return res.json({
         observation,
         reward: Number(result.reward ?? 0),
         terminated: false,
@@ -53,11 +53,7 @@ app.post("/step", (req, res) => {
         info: {}
     });
 });
-// ✅ Fallback route (prevents "Not Found" issues)
-app.use((req, res) => {
-    res.status(404).json({ error: "Route not found" });
-});
-// ✅ Start server
-app.listen(PORT, () => {
+// Start server (CRITICAL FIX)
+app.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
