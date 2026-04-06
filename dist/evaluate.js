@@ -2,7 +2,7 @@ import { TrafficEnv } from "./env/trafficEnv.js";
 import { Agent } from "./agent/qAgent.js";
 const env = new TrafficEnv();
 const agent = new Agent();
-// 🔴 RANDOM POLICY (before training)
+// (before training)
 let randomTotal = 0;
 for (let i = 0; i < 50; i++) {
     let state = env.reset();
@@ -17,7 +17,7 @@ for (let i = 0; i < 50; i++) {
                 state.west;
     }
 }
-// 🟢 TRAINED AGENT
+// TRAINED AGENT
 let trainedTotal = 0;
 for (let i = 0; i < 50; i++) {
     let state = env.reset();
