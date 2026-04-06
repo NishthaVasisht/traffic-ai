@@ -1,9 +1,10 @@
-FROM python:3.10
+FROM node:20
 
 WORKDIR /app
 
 COPY . .
 
-RUN pip install requests
+RUN npm install
+RUN npm run build
 
-CMD ["python", "inference.py"]
+CMD ["node", "dist/server.js"]
